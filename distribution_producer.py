@@ -1,32 +1,48 @@
 import sys
+import os
 NUM_COFLOWS = int(sys.argv[1]);
 ALPHA = (sys.argv[2]); #alpha value for code
 NUM_INP_PORTS = 150;
-LOAD_FACTOR = 0.9;
+LOAD_FACTOR = float(sys.argv[3]);
 ACCESS_LINK_BANDWIDTH = (1024*2)/8; #1024*2 MBPS = 2GBPS, 2/8GBPS = 2Gbps
 
 if(ALPHA=='FB-UP'):
     FILE = str(NUM_COFLOWS)+'-'+str(LOAD_FACTOR)+'-'+'FB-UP'
 else:
     ALPHA = int(ALPHA)
-    INTRA_COFLOW_CONTENTION = float(sys.argv[3]); #c discussed in the code, belongs to [0,1], the traffic is one to ir for c = 0 and all to all for c = 1
-    SOURCE_NUM_DIST = sys.argv[4]#'U' for uniform, 'Z' for zipf, 'FB' for trace
-    DESTINATION_DATA_DIST = sys.argv[5] #'U' for uniform, 'Z' for zipf
+    INTRA_COFLOW_CONTENTION = float(sys.argv[4]); #c discussed in the code, belongs to [0,1], the traffic is one to ir for c = 0 and all to all for c = 1
+    SOURCE_NUM_DIST = sys.argv[5]#'U' for uniform, 'Z' for zipf, 'FB' for trace
+    DESTINATION_DATA_DIST = sys.argv[6] #'U' for uniform, 'Z' for zipf
     FILE = str(NUM_COFLOWS)+'-'+str(LOAD_FACTOR)+'-'+str(ALPHA)+'-'+str(INTRA_COFLOW_CONTENTION*100)+'-'+str(SOURCE_NUM_DIST)+'-'+str(DESTINATION_DATA_DIST)
-
-INP_PICKLE_FILE = 'new_trace_pickles_3/' + FILE + '.pkl'
-SIZE_FILE = 'size_cdfs_3/size-' + FILE + '.txt'
-MAX_MIN_RATIO_FILE = 'max_min_ratio_cdfs_3/max_min_ratio-' + FILE + '.txt'
-WIDTH_FILE = 'width_cdfs_3/width-' + FILE + '.txt'
-LOAD_FILE = 'load_cdfs_3/load-' + FILE + '.txt'
-MAX_LOAD_FILE = 'load_cdfs_3/max_load-' + FILE + '.txt'
-MIN_LOAD_FILE = 'load_cdfs_3/min_load-' + FILE + '.txt'
-MIN_LOAD_FILE_2 = 'load_cdfs_3/min_load-2-' + FILE + '.txt'
-PLOT_FILE = 'load_cdfs_3/load_plot-' + FILE + '.eps'
-INTER_ARRIVAL_TIME_FILE = 'inter_arrival_time_cdfs_3/inter_arrival-' + FILE + '.txt'
-NUM_SOURCES_FILE = 'numsources_cdfs_3/numsources-' + FILE + '.txt'
-NUM_DESTINATIONS_FILE =  'numdestinations_cdfs_3/numdestinations-' + FILE + '.txt'
-IRS_FILE = 'irs_cdfs_3/irs-' + FILE + '.txt'
+if not os.path.exists('size_dir'):
+    os.mkdir('size_dir');
+if not os.path.exists('max_min_ratio_dir'):
+    os.mkdir('max_min_ratio_dir');
+if not os.path.exists('width_dir'):
+    os.mkdir('width_dir');
+if not os.path.exists('load_dir'):
+    os.mkdir('load_dir');
+if not os.path.exists('inter_arrival_time_dir'):
+    os.mkdir('inter_arrival_time_dir');
+if not os.path.exists('numsources_dir'):
+    os.mkdir('numsources_dir');
+if not os.path.exists('numdestinations_dir'):
+    os.mkdir('numdestinations_dir');
+if not os.path.exists('irs_dir'):
+    os.mkdir('irs_dir');
+INP_PICKLE_FILE = 'pickles/' + FILE + '.pkl'
+SIZE_FILE = 'size_dir/size-' + FILE + '.txt'
+MAX_MIN_RATIO_FILE = 'max_min_ratio_dir/max_min_ratio-' + FILE + '.txt'
+WIDTH_FILE = 'width_dir/width-' + FILE + '.txt'
+LOAD_FILE = 'load_dir/load-' + FILE + '.txt'
+MAX_LOAD_FILE = 'load_dir/max_load-' + FILE + '.txt'
+MIN_LOAD_FILE = 'load_dir/min_load-' + FILE + '.txt'
+MIN_LOAD_FILE_2 = 'load_dir/min_load-2-' + FILE + '.txt'
+PLOT_FILE = 'load_dir/load_plot-' + FILE + '.eps'
+INTER_ARRIVAL_TIME_FILE = 'inter_arrival_time_dir/inter_arrival-' + FILE + '.txt'
+NUM_SOURCES_FILE = 'numsources_dir/numsources-' + FILE + '.txt'
+NUM_DESTINATIONS_FILE =  'numdestinations_dir/numdestinations-' + FILE + '.txt'
+IRS_FILE = 'irs_dir/irs-' + FILE + '.txt'
 # MAX_DEST_PER_SOURCE_FILE = 'irs_cdfs/max-dest-' + FILE + '.txt'
 # DEST_PER_SOURCE_FILE = 'irs_cdfs/dest-' + FILE + '.txt'
 import pickle
@@ -101,7 +117,7 @@ for C in coflows:
 coflows.sort(key=operator.itemgetter('Arrival_Time'));
 for C in coflows:
     arrival_time_coflows.append(C['Arrival_Time']);
-print(arrival_time_coflows[150]);
+# print(arrival_time_coflows[150]);
 for i in range(1,len(arrival_time_coflows)):
     inter_arrival_time_coflows.append(arrival_time_coflows[i]-arrival_time_coflows[i-1]);
     inter_arrival_time_out_file.write(str(arrival_time_coflows[i]-arrival_time_coflows[i-1])+'\n');
@@ -176,7 +192,6 @@ plt.yscale('log');
 plt.grid(True);
 plt.title('min loads across all sources at 100ms intervals');
 plt.subplot(414);
-plt.plot(min2_loads_100_ms);
 plt.yscale('log');
 plt.grid(True);
 plt.title('avg(min 5 loads) across all sources at 100ms intervals');

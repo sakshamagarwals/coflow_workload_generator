@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import os
 
 # from sample import *
 import scipy.stats
@@ -10,19 +11,23 @@ import pickle
 NUM_COFLOWS = int(sys.argv[1]);
 ALPHA = (sys.argv[2]); #alpha value for code
 NUM_INP_PORTS = 150;
-LOAD_FACTOR = 0.9;
+LOAD_FACTOR = float(sys.argv[3]);
 ACCESS_LINK_BANDWIDTH = (1024*2)/8; #1024*2 MBPS = 2GBPS, 2/8GBPS = 2 Gbps
 
 if(ALPHA=='FB-UP'):
     FILE = str(NUM_COFLOWS)+'-'+str(LOAD_FACTOR)+'-'+'FB-UP'
 else:
     ALPHA = int(ALPHA)
-    INTRA_COFLOW_CONTENTION = float(sys.argv[3]); #c discussed in the code, belongs to [0,1], the traffic is one to ir for c = 0 and all to all for c = 1
-    SOURCE_NUM_DIST = sys.argv[4]#'U' for uniform, 'Z' for zipf, 'FB' for trace
-    DESTINATION_DATA_DIST = sys.argv[5] #'U' for uniform, 'Z' for zipf
+    INTRA_COFLOW_CONTENTION = float(sys.argv[4]); #c discussed in the code, belongs to [0,1], the traffic is one to ir for c = 0 and all to all for c = 1
+    SOURCE_NUM_DIST = sys.argv[5]#'U' for uniform, 'Z' for zipf, 'FB' for trace
+    DESTINATION_DATA_DIST = sys.argv[6] #'U' for uniform, 'Z' for zipf
     FILE = str(NUM_COFLOWS)+'-'+str(LOAD_FACTOR)+'-'+str(ALPHA)+'-'+str(INTRA_COFLOW_CONTENTION*100)+'-'+str(SOURCE_NUM_DIST)+'-'+str(DESTINATION_DATA_DIST)
-PICKLE_FILE = 'new_trace_pickles_3/' + FILE + '.pkl'
-OUTPUT_FILE = 'new_traces_generated_3/' + FILE  + '.txt'
+if not os.path.exists('pickles'):
+    os.mkdir('pickles');
+if not os.path.exists('traces'):
+    os.mkdir('traces');
+PICKLE_FILE = 'pickles/' + FILE + '.pkl'
+OUTPUT_FILE = 'traces/' + FILE  + '.txt'
 
 fb_trace = 'coflow-benchmark-trace.txt';
 
